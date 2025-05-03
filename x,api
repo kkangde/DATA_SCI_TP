@@ -1,0 +1,24 @@
+import requests
+
+# 실제 Bearer Token을 아래에 설정
+bearer_token = "AAAAAAAAAAAAAAAAAAAAAH0X1AEAAAAAaRvJHfL65O7kcxn949jNiQbwB60%3DKGWr4sHmnLMLE6hQmkyLcIDB1FU6795XLC4U6rc3ZZ8IV0X0gL"
+
+# 헤더에 Bearer Token을 올바르게 사용
+headers = {
+    "Authorization": f"Bearer {bearer_token}"
+}
+
+# 검색할 쿼리 (예시: '국회의원')
+query = "국회의원 lang:ko"  # 한국어 트윗을 찾기 위한 조건
+url = f"https://api.twitter.com/2/tweets/search/recent?query={query}&max_results=10"
+
+# 요청 보내기
+response = requests.get(url, headers=headers)
+
+# 결과 처리
+if response.status_code == 200:
+    tweets = response.json()
+    for tweet in tweets.get("data", []):
+        print(tweet["text"])
+else:
+    print("Error:", response.status_code, response.text)
