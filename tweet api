@@ -1,0 +1,30 @@
+# api_fetcher.py #김현민 
+import tweepy #Twitter api 를 사용하기 위한 모듈 
+
+#인증 정보 설정 
+consumer_key = "YOUR_CONSUMER_KEY" 
+consumer_secret = "YOUR_CONSUMER_SECRET"
+access_token = "YOUR_ACCESS_TOKEN"
+access_token_secret = "YOUR_ACCESS_TOKEN_SECRET"
+
+def fetch_tweets(keyword, count=10): #가져올 트윗 갯수 
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
+    tweets = []
+    try:
+        search_results = api.search_tweets(q=keyword, count=count, lang="ko")
+        for tweet in search_results:
+            tweets.append(tweet.text)
+        return tweets
+    except tweepy.TweepyException as e:
+        print(f"Twitter API error: {e}")
+        return None
+
+if __name__ == "__main__":
+    politician = "이재명"   #키워드 입력 
+    tweet_list = fetch_tweets(politician, count=200)
+    if tweet_list:
+        print(f"Successfully fetched {len(tweet_list)} tweets about '{politician}'.") 
+    else:
+        print("Failed to fetch tweets.")
