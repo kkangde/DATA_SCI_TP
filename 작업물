@@ -1,0 +1,30 @@
+from api_fetcher import fetch_tweets           //이전에 사용했던 다른 파일 사용 최종 트윗 분석 
+from sentiment_analyzer import analyze_feeling_with_keywords
+
+if __name__ == "__main__":
+    politician = "김두한"
+    tweets = fetch_tweets(politician, count=200)
+
+    if tweets:
+        print(f"\n--- '{politician}' 관련 트윗 감성 분석 결과 ---")
+        positive_count = 0
+        negative_count = 0
+        neutral_count = 0
+        for tweet in tweets:
+            analysis_result = analyze_feeling_with_keywords(tweet)
+            print(f"트윗: '{tweet}'")
+            print(f"분석 결과: {analysis_result}")
+            if "긍정적" in analysis_result:
+                positive_count += 1
+            elif "부정적" in analysis_result:
+                negative_count += 1
+            else:
+                neutral_count += 1
+        total_tweets = len(tweets)
+        print(f"\n--- 전체 분석 요약 ---")
+        print(f"총 트윗 수: {total_tweets}")
+        print(f"긍정적 트윗 수: {positive_count} ({positive_count / total_tweets * 100:.2f}%)")
+        print(f"부정적 트윗 수: {negative_count} ({negative_count / total_tweets * 100:.2f}%)")
+        print(f"중립적 트윗 수: {neutral_count} ({neutral_count / total_tweets * 100:.2f}%)")
+    else:
+        print("트윗을 가져오지 못했습니다.")
