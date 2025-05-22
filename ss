@@ -1,4 +1,4 @@
-import requests # requests 라이브러리 추가              #김현민 
+import requests # requests 라이브러리 추가              #김현민 감성 분석 모델 
 import os # os 라이브러리 추가 (API 키를 환경 변수에서 가져오기 위함)
 from transformers import pipeline
 
