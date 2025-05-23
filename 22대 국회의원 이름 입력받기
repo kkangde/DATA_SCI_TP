@@ -59,3 +59,4 @@ while True:
         print(f"'{name}'은(는) 국회의원 명단에 없습니다.")
     else:
         analyze_politician(name)
+'''박서진'''
