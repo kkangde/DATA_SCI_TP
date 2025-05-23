@@ -42,7 +42,7 @@ def analyze_politician(name):
             description = clean_text(item["description"])
             text = (title + " " + description)[:512]
             sentiment = sentiment_pipeline(text)[0]
-            print(f"\n📰 제목: {title}")
+            print(f"\n 제목: {title}")
             print(f" 요약: {description}")
             print(f" 감정: {sentiment['label']} (신뢰도: {sentiment['score']:.2f})")
     else:
