@@ -1,5 +1,5 @@
 폴더 이동
-cd C:\Users\deu\Desktop\ddd
+cd 유튜브 댓글 감성분석 폴더 위치
 
 가상환경
 python -m venv venv -만들기
