@@ -2,15 +2,34 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sentiment_project.settings')
 import django
 django.setup()
+
 from googleapiclient.discovery import build
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
+from konlpy.tag import Okt
+import json
 import requests
 from analysis.models import CommentSentiment
 
-# Django 설정
+# 사전 로딩
+with open("SentiWord_info.json", "r", encoding="utf-8") as f:
+    senti_data = json.load(f)
 
+senti_dict = {item["word_root"]: int(item["polarity"]) for item in senti_data}
+okt = Okt()
 
-# 국회의원 이름 수집 함수
+def analyze_sentiment_dict(text):
+    words = okt.morphs(text)
+    score = sum([senti_dict.get(word, 0) for word in words])
+
+    if score > 0:
+        sentiment = "긍정"
+    elif score < 0:
+        sentiment = "부정"
+    else:
+        sentiment = "중립"
+
+    return sentiment, score
+
+# 국회의원 API
 def get_all_member_names(api_key):
     url = "https://open.assembly.go.kr/portal/openapi/nwvrqwxyaytdsfvhu"
     params = {
@@ -30,11 +49,10 @@ def get_all_member_names(api_key):
         print("❌ 국회의원 API 요청 실패:", response.status_code)
         return []
 
-# YouTube 설정
+# YouTube API
 YOUTUBE_API_KEY = 'AIzaSyBNqTeD-YJ_5zSeqhKFY0s1Sno_ai2TtQ8'
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
-# 댓글 수집 함수
 def fetch_comments(youtube, video_id, max_count=30):
     comments = []
     req = youtube.commentThreads().list(
@@ -50,25 +68,8 @@ def fetch_comments(youtube, video_id, max_count=30):
             comments.append(text)
     return comments
 
-# 감성 분석기 설정
-model_name = "tabularisai/multilingual-sentiment-analysis"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-analyzer = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
-
-# 감성 라벨 맵
-sentiment_labels = {
-    'Very Positive': '매우 긍정',
-    'Positive': '긍정',
-    'Neutral': '중립',
-    'Negative': '부정',
-    'Very Negative': '매우 부정'
-}
-
 # 분석 및 저장
 def analyze_and_store_comments(member_names):
-    MIN_CONFIDENCE = 0.5
-
     for name in member_names:
         try:
             search = youtube.search().list(
@@ -89,18 +90,15 @@ def analyze_and_store_comments(member_names):
 
             for comment in comments:
                 try:
-                    result = analyzer(comment)[0]
-                    sentiment = sentiment_labels.get(result['label'], result['label'])
-                    confidence = round(result['score'], 2)
+                    sentiment, score = analyze_sentiment_dict(comment)
 
-                    if confidence >= MIN_CONFIDENCE:
-                        CommentSentiment.objects.create(
-                            member_name=name,
-                            comment_text=comment,
-                            sentiment=sentiment,
-                            sentiment_score=confidence
-                        )
-                        print(f"✅ 저장: {sentiment} ({confidence}) - {comment[:30]}...")
+                    CommentSentiment.objects.create(
+                        member_name=name,
+                        comment_text=comment,
+                        sentiment=sentiment,
+                        sentiment_score=score
+                    )
+                    print(f"✅ 저장: {sentiment} ({score}) - {comment[:30]}...")
                 except Exception as e:
                     print(f"⚠️ 감성 분석 실패: {e}")
         except Exception as e:
