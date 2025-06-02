@@ -1,97 +1,84 @@
+# save_comments.py
 import os
+import json
+import re
+import time
+import csv
+from dotenv import load_dotenv
+from konlpy.tag import Okt
+from googleapiclient.discovery import build
+
+# Django 설정
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sentiment_project.settings')
 import django
 django.setup()
-
-from googleapiclient.discovery import build
-from konlpy.tag import Okt
-import json
-import requests
 from analysis.models import CommentSentiment
 
-# 사전 로딩
-with open("SentiWord_info.json", "r", encoding="utf-8") as f:
-    senti_data = json.load(f)
-
-senti_dict = {item["word_root"]: int(item["polarity"]) for item in senti_data}
-okt = Okt()
-
-def analyze_sentiment_dict(text):
-    words = okt.morphs(text)
-    score = sum([senti_dict.get(word, 0) for word in words])
-
-    if score > 0:
-        sentiment = "긍정"
-    elif score < 0:
-        sentiment = "부정"
-    else:
-        sentiment = "중립"
-
-    return sentiment, score
-
-# 국회의원 API
-def get_all_member_names(api_key):
-    url = "https://open.assembly.go.kr/portal/openapi/nwvrqwxyaytdsfvhu"
-    params = {
-        'KEY': api_key,
-        'Type': 'json',
-        'pIndex': 1,
-        'pSize': 300
-    }
-    response = requests.get(url, params=params)
-    if response.status_code == 200:
-        data = response.json()
-        key = "nwvrqwxyaytdsfvhu"
-        rows = data.get(key, [])[1].get("row", [])
-        names = [member["HG_NM"] for member in rows if "HG_NM" in member]
-        return names
-    else:
-        print("❌ 국회의원 API 요청 실패:", response.status_code)
-        return []
-
-# YouTube API
-YOUTUBE_API_KEY = 'AIzaSyBNqTeD-YJ_5zSeqhKFY0s1Sno_ai2TtQ8'
+# 환경 설정
+load_dotenv()
+YOUTUBE_API_KEY = ("YOUTUBE_API_KEY")
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
 
-def fetch_comments(youtube, video_id, max_count=30):
+# 감성 사전 로드
+with open("Training.json", "r", encoding="utf-8") as f:
+    senti_dict = {item["word_root"]: int(item["polarity"]) for item in json.load(f)}
+
+okt = Okt()
+
+def clean_text(text):
+    return re.sub(r'[^\uAC00-\uD7A3a-zA-Z0-9\s]', '', text)
+
+def analyze_sentiment(text):
+    words = okt.morphs(clean_text(text))
+    score = sum([senti_dict.get(word, 0) for word in words])
+    sentiment = "긍정" if score > 0 else "부정" if score < 0 else "중립"
+    return sentiment, score
+
+def fetch_comments(video_id, max_count=30):
     comments = []
-    req = youtube.commentThreads().list(
-        part='snippet',
-        videoId=video_id,
-        maxResults=max_count,
-        textFormat='plainText'
-    )
-    res = req.execute()
-    for item in res.get('items', []):
-        text = item['snippet']['topLevelComment']['snippet']['textDisplay']
-        if len(text.strip()) > 5:
-            comments.append(text)
+    try:
+        res = youtube.commentThreads().list(
+            part='snippet',
+            videoId=video_id,
+            maxResults=max_count,
+            textFormat='plainText'
+        ).execute()
+        for item in res.get('items', []):
+            text = item['snippet']['topLevelComment']['snippet']['textDisplay']
+            if len(text.strip()) > 5:
+                comments.append(text)
+    except Exception as e:
+        print(f"❗ 댓글 요청 실패: {e}")
     return comments
 
-# 분석 및 저장
-def analyze_and_store_comments(member_names):
-    for name in member_names:
-        try:
-            search = youtube.search().list(
-                q=name,
-                part='snippet',
-                type='video',
-                maxResults=1
-            ).execute()
+def analyze_and_store_from_csv(csv_path='video_ids.csv'):
+    if not os.path.exists(csv_path):
+        print("❗ CSV 파일이 없습니다.")
+        return
 
-            if not search['items']:
+    updated_rows = []
+
+    with open(csv_path, 'r', encoding='utf-8') as f:
+        reader = list(csv.DictReader(f))
+        for row in reader:
+            if row.get("analyzed", "").lower() == 'true':
+                updated_rows.append(row)
                 continue
 
-            video = search['items'][0]
-            video_id = video['id']['videoId']
-            comments = fetch_comments(youtube, video_id)
+            name = row['member_name']
+            video_id = row['video_id']
+            title = row['video_title']
+            if not video_id:
+                updated_rows.append(row)
+                continue
 
-            print(f"\n🎯 의원: {name}, 영상: {video['snippet']['title']}, 댓글 수: {len(comments)}")
-
+            comments = fetch_comments(video_id)
+            print(f"\n🎯 {name} | 영상: {title} | 댓글 수: {len(comments)}")
             for comment in comments:
+                if CommentSentiment.objects.filter(member_name=name, comment_text=comment).exists():
+                    continue
                 try:
-                    sentiment, score = analyze_sentiment_dict(comment)
-
+                    sentiment, score = analyze_sentiment(comment)
                     CommentSentiment.objects.create(
                         member_name=name,
                         comment_text=comment,
@@ -100,11 +87,19 @@ def analyze_and_store_comments(member_names):
                     )
                     print(f"✅ 저장: {sentiment} ({score}) - {comment[:30]}...")
                 except Exception as e:
-                    print(f"⚠️ 감성 분석 실패: {e}")
-        except Exception as e:
-            print(f"❌ YouTube 검색 오류: {name} - {e}")
+                    print(f"⚠️ 저장 실패: {e}")
 
-# 실행
-OPEN_API_KEY = "1343ad8c9a584b86a2493aa90cf51060"
-member_names = get_all_member_names(OPEN_API_KEY)
-analyze_and_store_comments(member_names)
+            row['analyzed'] = 'True'
+            updated_rows.append(row)
+
+    # 갱신된 analyzed 상태 다시 저장
+    with open(csv_path, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=['member_name', 'video_id', 'video_title', 'analyzed'])
+        writer.writeheader()
+        writer.writerows(updated_rows)
+
+def main():
+    analyze_and_store_from_csv()
+
+if __name__ == "__main__":
+    main()
