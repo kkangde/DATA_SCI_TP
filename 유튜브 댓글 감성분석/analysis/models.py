@@ -6,6 +6,7 @@ class CommentSentiment(models.Model):
     sentiment = models.CharField(max_length=20)     # 감성 결과 (예: 긍정, 부정, 중립)
     sentiment_score = models.FloatField(null=True, blank=True)  # 감성 점수(신뢰도), 없을 수도 있음
     created_at = models.DateTimeField(auto_now_add=True)  # 저장 시간
+    like_count = models.IntegerField(default=0) #좋아요 순
 
     def __str__(self):
         return f"{self.member_name} - {self.sentiment} ({self.sentiment_score})"

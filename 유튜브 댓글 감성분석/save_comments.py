@@ -1,26 +1,34 @@
-# save_comments.py
 import os
 import json
 import re
-import time
 import csv
-from dotenv import load_dotenv
 from konlpy.tag import Okt
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
-# Django 설정
+# Django 환경 설정
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sentiment_project.settings')
 import django
 django.setup()
 from analysis.models import CommentSentiment
 
-# 환경 설정
-load_dotenv()
-YOUTUBE_API_KEY = ("YOUTUBE_API_KEY")
-youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+# 여러 API 키 순환 사용
+API_KEYS = [
+    "AIzaSyBY7zG5sVJ4VXlqd6JdCW4Q_29zNwox7V0",
+    "AIzaSyCG9G9CSIHFmlRruVgshmU5-xGkhATlMZ0",
+    "AIzaSyCF4WX5FGjd9-zsb9PPLvNZfe5z-6mESL8",
+    "AIzaSyC5GxrmYvYHJXDQub_0JMHhc4ArQHhzyoA"
+]
+current_key_index = 0
+
+def get_youtube_client():
+    global current_key_index
+    key = API_KEYS[current_key_index]
+    current_key_index = (current_key_index + 1) % len(API_KEYS)
+    return build('youtube', 'v3', developerKey=key)
 
 # 감성 사전 로드
-with open("Training.json", "r", encoding="utf-8") as f:
+with open("SentiWord_info.json", "r", encoding="utf-8") as f:
     senti_dict = {item["word_root"]: int(item["polarity"]) for item in json.load(f)}
 
 okt = Okt()
@@ -34,21 +42,49 @@ def analyze_sentiment(text):
     sentiment = "긍정" if score > 0 else "부정" if score < 0 else "중립"
     return sentiment, score
 
-def fetch_comments(video_id, max_count=30):
+def fetch_comments(video_id, max_count=30, max_retries=5):
+    """
+    좋아요(인기) 순으로 댓글 30개 수집 (중복 방지는 DB에서 처리)
+    API 키 순환 및 쿼터 초과/오류 자동 전환
+    """
     comments = []
-    try:
-        res = youtube.commentThreads().list(
-            part='snippet',
-            videoId=video_id,
-            maxResults=max_count,
-            textFormat='plainText'
-        ).execute()
-        for item in res.get('items', []):
-            text = item['snippet']['topLevelComment']['snippet']['textDisplay']
-            if len(text.strip()) > 5:
-                comments.append(text)
-    except Exception as e:
-        print(f"❗ 댓글 요청 실패: {e}")
+    next_page_token = None
+    tried = 0
+    while len(comments) < max_count:
+        youtube = get_youtube_client()
+        try:
+            req = youtube.commentThreads().list(
+                part='snippet',
+                videoId=video_id,
+                maxResults=min(100, max_count - len(comments)),
+                textFormat='plainText',
+                order='relevance'
+            )
+            if next_page_token:
+                req = req.pageToken(next_page_token)
+            res = req.execute()
+            for item in res.get('items', []):
+                snippet = item['snippet']['topLevelComment']['snippet']
+                text = snippet['textDisplay']
+                like_count = snippet.get('likeCount', 0)
+                if len(text.strip()) > 5:
+                    comments.append((text, like_count))
+                    if len(comments) >= max_count:
+                        break
+            next_page_token = res.get('nextPageToken')
+            if not next_page_token:
+                break
+        except HttpError as e:
+            tried += 1
+            error_reason = str(e)
+            print(f"❗ API 오류({error_reason}), 다른 API 키로 재시도({tried}/{max_retries})")
+            if tried >= max_retries * len(API_KEYS):
+                print("❌ 모든 API 키 실패")
+                break
+            continue
+        except Exception as e:
+            print(f"❗ 댓글 요청 실패: {e}")
+            break
     return comments
 
 def analyze_and_store_from_csv(csv_path='video_ids.csv'):
@@ -72,9 +108,10 @@ def analyze_and_store_from_csv(csv_path='video_ids.csv'):
                 updated_rows.append(row)
                 continue
 
-            comments = fetch_comments(video_id)
+            comments = fetch_comments(video_id, max_count=30)
             print(f"\n🎯 {name} | 영상: {title} | 댓글 수: {len(comments)}")
-            for comment in comments:
+            for comment, like_count in comments:
+                # 중복 댓글 방지
                 if CommentSentiment.objects.filter(member_name=name, comment_text=comment).exists():
                     continue
                 try:
@@ -83,9 +120,10 @@ def analyze_and_store_from_csv(csv_path='video_ids.csv'):
                         member_name=name,
                         comment_text=comment,
                         sentiment=sentiment,
-                        sentiment_score=score
+                        sentiment_score=score,
+                        like_count=like_count  # 모델에 like_count 필드가 있어야 함!
                     )
-                    print(f"✅ 저장: {sentiment} ({score}) - {comment[:30]}...")
+                    print(f"✅ 저장: {sentiment} ({score}) | 좋아요:{like_count} - {comment[:30]}...")
                 except Exception as e:
                     print(f"⚠️ 저장 실패: {e}")
 

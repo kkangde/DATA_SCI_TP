@@ -1,12 +1,47 @@
-# save_video.py
 import os
 import csv
+import time
 import requests
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
-YOUTUBE_API_KEY = ("AIzaSyBNqTeD-YJ_5zSeqhKFY0s1Sno_ai2TtQ8")
-ASSEMBLY_API_KEY = ("1343ad8c9a584b86a2493aa90cf51060")
-youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+# ✅ 여러 API 키를 순환 사용
+API_KEYS = [
+    "AIzaSyCF4WX5FGjd9-zsb9PPLvNZfe5z-6mESL8",
+    "AIzaSyC5GxrmYvYHJXDQub_0JMHhc4ArQHhzyoA",
+    "AIzaSyCG9G9CSIHFmlRruVgshmU5-xGkhATlMZ0",
+    "AIzaSyBY7zG5sVJ4VXlqd6JdCW4Q_29zNwox7V0"
+]
+current_key_index = 0
+
+def get_youtube_client():
+    global current_key_index
+    key = API_KEYS[current_key_index]
+    current_key_index = (current_key_index + 1) % len(API_KEYS)
+    return build("youtube", "v3", developerKey=key)
+
+def search_video(name, max_retries=5):
+    for _ in range(max_retries):
+        youtube = get_youtube_client()
+        try:
+            res = youtube.search().list(
+                q=name,
+                part='snippet',
+                type='video',
+                maxResults=1
+            ).execute()
+            return res
+        except HttpError as e:
+            error_reason = e.error_details[0]['reason'] if hasattr(e, 'error_details') else str(e)
+            if 'quotaExceeded' in str(e) or 'keyInvalid' in str(e) or 'badRequest' in str(e):
+                print(f"🔁 API 키 오류 또는 쿼터 초과. 다음 키로 전환...")
+                time.sleep(1)
+                continue
+            raise e
+    print(f"❌ 모든 키 실패: {name}")
+    return None
+
+ASSEMBLY_API_KEY = "1343ad8c9a584b86a2493aa90cf51060"
 
 def get_all_member_names():
     url = "https://open.assembly.go.kr/portal/openapi/nwvrqwxyaytdsfvhu"
@@ -39,24 +74,17 @@ def save_video_ids_to_csv(member_names, output_csv='video_ids.csv'):
         for name in member_names:
             if name in existing:
                 continue
-            try:
-                res = youtube.search().list(
-                    q=name,
-                    part='snippet',
-                    type='video',
-                    maxResults=1
-                ).execute()
-                if res['items']:
-                    video = res['items'][0]
-                    video_id = video['id']['videoId']
-                    title = video['snippet']['title']
-                    writer.writerow([name, video_id, title, 'False'])
-                    print(f"✅ 저장: {name} - {video_id} ({title})")
-                else:
-                    writer.writerow([name, '', '', 'False'])
-                    print(f"⚠️ 영상 없음: {name}")
-            except Exception as e:
-                print(f"❌ 오류: {name} - {e}")
+
+            res = search_video(name)
+            if res and 'items' in res and res['items']:
+                video = res['items'][0]
+                video_id = video['id'].get('videoId', '')
+                title = video['snippet'].get('title', '')
+                writer.writerow([name, video_id, title, 'False'])
+                print(f"✅ 저장: {name} - {video_id} ({title})")
+            else:
+                writer.writerow([name, '', '', 'False'])
+                print(f"⚠️ 영상 없음 또는 요청 실패: {name}")
 
 def main():
     members = get_all_member_names()

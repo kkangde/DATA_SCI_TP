@@ -19,6 +19,12 @@ python manage.py migrate
 서버실행
 python manage.py runserver
 
+유튜브 키
+"AIzaSyCF4WX5FGjd9-zsb9PPLvNZfe5z-6mESL8",
+"AIzaSyC5GxrmYvYHJXDQub_0JMHhc4ArQHhzyoA",
+"AIzaSyBY7zG5sVJ4VXlqd6JdCW4Q_29zNwox7V0",
+"AIzaSyCG9G9CSIHFmlRruVgshmU5-xGkhATlMZ0",
+"AIzaSyD9lFqAd8rwMgSD3fMmD1m_WYQFxtuqL34" -김재현 IAM설정 안함
 국회의원 키
 1343ad8c9a584b86a2493aa90cf51060
 
