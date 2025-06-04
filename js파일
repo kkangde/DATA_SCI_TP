@@ -1,0 +1,95 @@
+let currentPage = 1;
+const itemsPerPage = 10;
+
+window.onload = () => {
+  displayMembers();
+  renderPagination();
+};
+
+
+
+function filterMembers() {
+  const name = document.getElementById("name").value.trim();
+  const party = document.getElementById("party").value;
+  const area = document.getElementById("area").value;
+  const gender = document.getElementById("gender").value;
+
+  const filtered = members.filter(m => {
+    return (
+      (!name || m.NAAS_NM?.includes(name)) &&
+      (!party || m.PLPT_NM === party) &&
+      (!area || m.ELECD_NM?.includes(area)) &&
+      (!gender || m.NTR_DIV === gender)
+    );
+  });
+
+  currentPage = 1;
+  displayMembers(filtered);
+  renderPagination(filtered);
+}
+
+function resetFilters() {
+  document.getElementById("name").value = "";
+  document.getElementById("party").value = "";
+  document.getElementById("area").value = "";
+  document.getElementById("gender").value = "";
+  currentPage = 1;
+  displayMembers();
+  renderPagination();
+}
+
+function displayMembers(list = members) {
+  const container = document.getElementById("resultContainer");
+  container.innerHTML = "";
+
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageMembers = list.slice(start, end);
+
+  if (!pageMembers.length) {
+    container.innerHTML = "<p>검색 결과가 없습니다.</p>";
+    return;
+  }
+
+  pageMembers.forEach(m => {
+    const card = document.createElement("div");
+    card.style.border = "1px solid #ccc";
+    card.style.padding = "10px";
+    card.style.marginBottom = "10px";
+    card.style.borderRadius = "8px";
+    card.style.backgroundColor = "white";
+    card.innerHTML = `
+      <strong>${m.NAAS_NM}</strong> - ${m.PLPT_NM || "소속 없음"}<br>
+      지역구: ${m.ELECD_NM || "정보 없음"}<br>
+      성별: ${m.NTR_DIV || "정보 없음"}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderPagination(list = members) {
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+
+  const totalItems = list.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  if (totalPages <= 1) return;
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.style.margin = "0 3px";
+    btn.style.padding = "4px 10px";
+    btn.style.borderRadius = "4px";
+    btn.style.border = "1px solid #bbb";
+    btn.style.background = (i === currentPage) ? "#007bff" : "#fff";
+    btn.style.color = (i === currentPage) ? "#fff" : "#222";
+    btn.onclick = () => {
+      currentPage = i;
+      displayMembers(list);
+      renderPagination(list);
+    };
+    pagination.appendChild(btn);
+  }
+}
