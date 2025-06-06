@@ -210,9 +210,14 @@
 	"polarity": "1"
 },
 {
-	"word": "ㄱㅇㄷ",
-	"word_root": "ㄱ",
-	"polarity": "1"
+    "word": "ㄱㅅ",
+    "word_root": "ㄱ",
+    "polarity": "1"
+},
+{
+	"word": "계십니다",
+	"word_root": "계",
+	"polarity": "2"
 },
 {
 	"word": "가격이 싸다",
@@ -510,14 +515,34 @@
 	"polarity": "-1"
 },
 {
+"word": "♡",
+"word_root": "♡",
+"polarity": "2"
+},
+{
+"word": "❤",
+"word_root": "❤",
+"polarity": "2"
+},
+{
 	"word": "가량맞고 야살스러움",
 	"word_root": "가량 야살",
 	"polarity": "-1"
 },
 {
-	"word": "가려서 좋아하다",
-	"word_root": "가리 좋아하",
-	"polarity": "-1"
+	"word": "...",
+	"word_root": "...",
+	"polarity": "0"
+},
+{
+    "word": "가려서 좋아하다",
+    "word_root": "가리 좋아하",
+    "polarity": "-1"
+},
+{
+    "word": "좋아요",
+    "word_root": "좋아",
+    "polarity": "2"
 },
 {
 	"word": "가려운",
@@ -1474,6 +1499,7 @@
 	"word_root": "감개",
 	"polarity": "2"
 },
+
 {
 	"word": "감격",
 	"word_root": "감격",
@@ -1678,6 +1704,11 @@
 	"word": "감사를 표하다",
 	"word_root": "감사 표하",
 	"polarity": "2"
+},
+{
+    "word": "감사합니다",
+    "word_root": "감사합니다",
+    "polarity": "1"
 },
 {
 	"word": "감사하는",
@@ -4945,6 +4976,12 @@
 	"polarity": "-2"
 },
 {
+    "word": "고생많으셨습니다",
+    "word_root": "고생많으셨습니다",
+    "polarity": "2"
+},
+
+{
 	"word": "고생을",
 	"word_root": "고생",
 	"polarity": "-1"
@@ -6983,6 +7020,11 @@
 	"word": "굳세게",
 	"word_root": "굳세",
 	"polarity": "2"
+},
+{
+    "word": "화끈",
+    "word_root": "화끈",
+    "polarity": "2"
 },
 {
 	"word": "굳세게 함",
@@ -14060,6 +14102,11 @@
 	"word_root": "다듬 않",
 	"polarity": "-1"
 },
+
+"word": "지지",
+"word_root": "지지",
+"polarity": "2"
+},
 {
 	"word": "다랍게",
 	"word_root": "다랍",
@@ -19466,6 +19513,11 @@
 	"polarity": "-2"
 },
 {
+    "word": "짱",
+    "word_root": "짱",
+    "polarity": "2"
+},
+{
 	"word": "말짱하게",
 	"word_root": "말짱",
 	"polarity": "2"
@@ -21026,6 +21078,11 @@
 	"polarity": "2"
 },
 {
+    "word": "좋습니다",
+    "word_root": "좋습니다",
+    "polarity": "2"
+},
+{
 	"word": "매우 좋아지다",
 	"word_root": "맵 좋아지",
 	"polarity": "2"
@@ -21994,6 +22051,15 @@
 	"word": "명백하지 않은",
 	"word_root": "명백 않",
 	"polarity": "-1"
+},
+{
+    "word": "복 받",
+    "word_root": "복 받,
+    "polarity": "1"
+}'{👍
+    "word": "명복을 빌고",
+    "word_root": "명복 빌",
+    "polarity": "1"
 },
 {
 	"word": "명복을 빌고",
@@ -23169,6 +23235,11 @@
 	"word": "몹시 번드럽다",
 	"word_root": "몹시 번",
 	"polarity": "2"
+},
+{
+    "word": "는 분",
+    "word_root": "는 분",
+    "polarity": "1"
 },
 {
 	"word": "몹시 분하거나",
@@ -31829,6 +31900,11 @@
 	"word": "비추천",
 	"word_root": "비추",
 	"polarity": "-2"
+},
+{
+    "word": "추천",
+    "word_root": "추천",
+    "polarity": "2"
 },
 {
 	"word": "비추하다",
@@ -45747,6 +45823,11 @@
 	"polarity": "-1"
 },
 {
+    "word": "예술가",
+    "word_root": "예술",
+    "polarity": "2"
+},
+{
 	"word": "어이없을 때",
 	"word_root": "어이 때",
 	"polarity": "-1"
@@ -55613,6 +55694,16 @@
 	"polarity": "-1"
 },
 {
+    "word": "잘한다",
+    "word_root": "잘한다",
+    "polarity": "2"
+},
+{
+    "word": "잘하시",
+    "word_root": "잘하",
+    "polarity": "2"
+},
+{
 	"word": "잘하는",
 	"word_root": "잘하",
 	"polarity": "2"
@@ -56532,6 +56623,12 @@
 	"word_root": "절개 굳",
 	"polarity": "1"
 },
+{
+    "word": "개조아",
+    "word_root": "개조아",
+    "polarity": "2"
+},
+
 {
 	"word": "절거나",
 	"word_root": "절",
@@ -60975,7 +61072,7 @@
 {
 	"word": "지지",
 	"word_root": "지지",
-	"polarity": "-1"
+	"polarity": "2"
 },
 {
 	"word": "지지 아니하고",
@@ -62841,6 +62938,16 @@
 	"word": "창렬",
 	"word_root": "창",
 	"polarity": "-1"
+},
+{
+    "word": "이네요",
+    "word_root": "이네요",
+    "polarity": "0"
+},
+{
+    "word": "우와",
+    "word_root": "우와",
+    "polarity": "0"
 },
 {
 	"word": "창렬스러운",
@@ -69998,6 +70105,11 @@
 	"polarity": "2"
 },
 {
+    "word": "선생님",
+    "word_root": "선생님",
+    "polarity": "2"
+},
+{
 	"word": "호의나",
 	"word_root": "호의",
 	"polarity": "2"
@@ -73615,7 +73727,7 @@
 {
 	"word": "ㅠ",
 	"word_root": "ㅠ",
-	"polarity": "-1"
+	"polarity": "1"
 },
 {
 	"word": "ㅠ_ㅠ",
@@ -73625,8 +73737,14 @@
 {
 	"word": "ㅠㅠ ",
 	"word_root": "ㅠㅠ",
-	"polarity": "-1"
+	"polarity": "1"
 },
+{
+    "word": "ㅠㅠㅠ",
+    "word_root": "ㅠㅠㅠ",
+    "polarity": "1"
+},
+
 {
 	"word": "ㅡㅡ",
 	"word_root": "ㅡㅡ",
