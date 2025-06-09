@@ -30,7 +30,7 @@ okt = Okt()
 
 # 1. 국회의원 정보 수집
 def get_politicians():
-    url = "https://open.assembly.go.kr/portal/openapi/nzmimeepazxkubdpn"
+    url = "hhttps://open.assembly.go.kr/portal/openapi/nwvrqwxyijtxqyuj"
     params = {
         "KEY": CONGRESS_API_KEY,
         "Type": "json",
