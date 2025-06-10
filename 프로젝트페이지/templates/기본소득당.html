@@ -1,0 +1,25 @@
+{% extends "템플릿.html" %}
+{% block title %}기본소득당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>기본소득당</h2>
+    </div>
+    <div class="product-grid1">
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/b71fbe23a11d45a9935a24fcfac4447b.png" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">용혜인</h3>
+        </div>
+  </div>
+</section>
+
+<script>
+  window.members = {{ members|tojson|safe }};
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "템플릿.html" %}
+{% block title %}진보당당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>진보당 의원 정보</title>
+</head>
+<body>
+    <h1>진보당</h1>
+    
+    <div id="memberContainer"></div>
+    
+    <script src="{{ url_for('static', filename='js/js.js') }}"></script>
+</body>
+</html>
+
+{% endblock %}

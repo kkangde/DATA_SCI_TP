@@ -1,0 +1,22 @@
+{% extends "템플릿.html" %}
+{% block title %}사회민주당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>사회민주당</h2>
+    </div>
+    <div id="memberContainer">
+      {% for m in members %}
+        <div class="member-card">
+          <img src="{{ m.NAAS_PIC or 'https://via.placeholder.com/200x250?text=No+Image' }}" alt="{{ m.NAAS_NM }}">
+          <div style="font-weight:bold;">{{ m.NAAS_NM }}</div>
+          <div>{{ m.PLPT_NM or '정보 없음' }}</div>
+          <div>{{ m.ELECD_NM or '정보 없음' }}</div>
+          <div>{{ m.NTR_DIV or '정보 없음' }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

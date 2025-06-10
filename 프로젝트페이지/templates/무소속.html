@@ -1,0 +1,39 @@
+{% extends "템플릿.html" %}
+{% block title %}무소속속 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>무소속</h2>
+    </div>
+    <div class="product-grid3">
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://image.fnnews.com/resource/media/image/2020/08/12/202008121611146950_l.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">김종민</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.chosun.com/resizer/v2/KUFNHKZNUB7LK5O3TZXE7O2LPE.jpg?auth=7caed9935777bdef395a64e44de226ac34f18e9e1fd7cccfebe44102e7a69bcc&width=616" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">우원식</h3>
+        </div>
+      </div>
+      <div id="resultContainer" class="container" style="margin-bottom: 50px;"></div>
+      <div id="pagination" style="margin:20px 0; text-align:center;"></div>
+
+      <script>
+  window.members = {{ members|tojson|safe }};
+  // 값이 제대로 들어왔는지 확인
+  console.log("window.members", window.members);
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+
+
+</section>
+{% endblock %}

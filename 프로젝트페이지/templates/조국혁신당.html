@@ -1,0 +1,119 @@
+{% extends "템플릿.html" %}
+{% block title %}조국혁신당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>조국혁신당</h2>
+    </div>
+    <div class="product-grid1">
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/68f83caf0c9e4546b1694ead863f45ce.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">강경숙</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/ae483328582e4add9e57312dfdd896a0.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">김선민</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/180a8fbbf0154728b747efe1d19490eb.png" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">김재원</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/7e2d7f243fdf4eaba8fb034549668444.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">김준형</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/b033dfb3a2f44e27a4906549e989ae47.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">박은정</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/446b8aed67c64e6097539b99b0eb97a7.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">백선희</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/e1f391e91c644541ab6208a90e78daaa.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">서왕진</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/b7e182c9e46d4c1d9cb850a67bb8706b.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">신장식</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/daea8ffe45ce4baca4b3ddabd5967322.png" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">이해민</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/69ac62e637b447b6a7ada23613cb4193.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">정춘생</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/b0844cd3027340e58a98404b7cc979ce.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">차규근</h3>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/thumb/06c8428e6785477abb1f105fa11685b4.jpg" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">황운하</h3>
+        </div>
+
+      </div>
+      <div id="resultContainer" class="container" style="margin-bottom: 50px;"></div>
+      <div id="pagination" style="margin:20px 0; text-align:center;"></div>
+      <script>
+  window.members = {{ members|tojson|safe }};
+  // 값이 제대로 들어왔는지 확인
+  console.log("window.members", window.members);
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+
+
+</section>
+{% endblock %}
