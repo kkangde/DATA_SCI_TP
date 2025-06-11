@@ -1,0 +1,81 @@
+<!-- s.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>국회의원 목록</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+
+  <h2>제22대 국회의원</h2>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>이름</th>
+        <th>정당</th>
+        <th>사진</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in members %}
+      <tr>
+        <td>
+          <a href="#" class="member-link" data-member='{{ m | tojson | safe }}'>
+            {{ m.HG_NM }}
+          </a>
+        </td>
+        <td>{{ m.POLY_NM }}</td>
+        <td>
+          {% if m.NAAS_PIC %}
+            <img src="{{ m.NAAS_PIC }}" width="50">
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Modal -->
+  <div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="memberModalLabel">국회의원 정보</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered" id="memberDetails"></table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS + jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll('.member-link').forEach(link => {
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        const data = JSON.parse(link.getAttribute('data-member'));
+        const modal = new bootstrap.Modal(document.getElementById('memberModal'));
+        const table = document.getElementById('memberDetails');
+        table.innerHTML = ''; // 초기화
+
+        for (const [key, value] of Object.entries(data)) {
+          table.innerHTML += `
+            <tr>
+              <th>${key}</th>
+              <td>${value}</td>
+            </tr>`;
+        }
+
+        modal.show();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ party }} 국회의원</title>
+</head>
+<body>
+  <h1>{{ party }} 소속 국회의원</h1>
+  <ul>
+    {% for member in members %}
+      <li>
+        <img src="{{ member.NAAS_PIC or '' }}" alt="사진" width="50" />
+        {{ member.HG_NM }} - {{ member.POLY_NM }}
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

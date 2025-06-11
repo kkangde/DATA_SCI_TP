@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>API 문서</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; padding: 2rem; }
+    code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 4px; }
+    pre { background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow: auto; }
+    h2 { color: #2c3e50; }
+  </style>
+</head>
+<body>
+  <h1>국회의원 API 문서</h1>
+
+  <h2>1. 전체 의원 목록</h2>
+  <p><code>GET /</code></p>
+  <p>현재(22대) 국회의원 전체를 HTML로 보여줍니다.</p>
+
+  <h2>2. 정당별 HTML 페이지</h2>
+  <p><code>GET /party/&lt;party_name&gt;</code></p>
+  <p>특정 정당에 소속된 국회의원 목록을 HTML로 보여줍니다.</p>
+  <p><strong>예시:</strong> <code>/party/더불어민주당</code></p>
+
+  <h2>3. 정당별 JSON API</h2>
+  <p><code>GET /api/party/&lt;party_name&gt;</code></p>
+  <p>특정 정당에 소속된 국회의원을 JSON 형태로 반환합니다.</p>
+  <p><strong>예시:</strong> <code>/api/party/국민의힘</code></p>
+  <p>응답 예시:</p>
+  <pre><code>[
+  {
+    "name": "홍길동",
+    "party": "국민의힘",
+    "image_url": "https://..."
+  },
+  ...
+]</code></pre>
+
+  <h2>4. 지원되는 정당 이름 목록</h2>
+  <ul>
+    <li>국민의힘</li>
+    <li>더불어민주당</li>
+    <li>개혁신당</li>
+    <li>기본소득당</li>
+    <li>진보당</li>
+    <li>무소속</li>
+    <li>조국혁신당</li>
+    <li>사회민주당</li>
+  </ul>
+
+  <hr>
+  <p>본 API는 국회공공데이터포털을 기반으로 합니다.</p>
+</body>
+</html>
