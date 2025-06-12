@@ -1,0 +1,30 @@
+{% extends "템플릿.html" %}
+{% block title %}무소속 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<!-- 1. 모달(팝업) HTML: 한 번만 추가 -->
+<div id="memberModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center;">
+  <div id="modalContent" style="background:white; border-radius:12px; padding:32px; min-width:300px; max-width:90vw; position:relative;">
+    <span id="closeModal" style="position:absolute; top:10px; right:18px; font-size:2rem; cursor:pointer;">&times;</span>
+    <!-- 상세 내용이 JS로 들어옴 -->
+  </div>
+</div>
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>무소속</h2>
+    </div>
+    <!-- 2. 동적으로 카드가 들어갈 영역만 남김 -->
+    <div id="memberContainer" class="product-grid3"></div>
+    <div id="pagination" style="margin:20px 0; text-align:center;"></div>
+  </div>
+</section>
+
+<script>
+  window.members = {{ members|tojson|safe }};
+  // 값이 제대로 들어왔는지 확인
+  console.log("window.members", window.members);
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+{% endblock %}

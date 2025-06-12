@@ -1,0 +1,44 @@
+{% extends "템플릿.html" %}
+{% block title %}진보당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>진보당</h2>
+    </div>
+    <div id="memberContainer"></div>
+    <div id="pagination" style="margin:20px 0; text-align:center;"></div>
+  </div>
+</section>
+<script>
+  window.members = {{ members|tojson|safe }};
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+<style>
+.product-card {
+  background-color: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 220px;       /* 카드 최대 너비 제한 */
+  min-width: 160px;       /* 카드 최소 너비 (선택) */
+  margin: 0 auto;         /* 카드가 그리드 안에서 중앙 정렬 */
+  padding: 0;             /* 불필요한 여백 제거 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-image img,
+.member-card img {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "템플릿.html" %}
+{% block title %}개혁신당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<!-- 상세 정보 모달(팝업) -->
+<div id="memberModal" style="display:none; position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center;">
+  <div id="modalContent" style="background:white; border-radius:12px; padding:32px; min-width:300px; max-width:90vw; position:relative;">
+    <span id="closeModal" style="position:absolute; top:10px; right:18px; font-size:2rem; cursor:pointer;">&times;</span>
+    <!-- 상세 내용이 JS로 들어옴 -->
+  </div>
+</div>
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>개혁신당</h2>
+    </div>
+    <!-- 동적으로 카드가 들어갈 곳 -->
+    <div id="memberContainer" class="product-grid1" style="margin-top: 30px;"></div>
+    <div id="pagination" style="margin:20px 0; text-align:center;"></div>
+  </div>
+</section>
+
+<script>
+  window.members = {{ members|tojson|safe }};
+  // 값이 제대로 들어왔는지 확인 (개발용)
+  console.log("window.members", window.members);
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+
+<style>
+.product-card {
+  background-color: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  max-width: 220px;
+  min-width: 160px;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+.product-image img,
+.member-card img {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+}
+#memberContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+  justify-items: center;
+  margin-top: 30px;
+}
+.product-info {
+  padding: 16px 8px;
+  text-align: center;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "템플릿.html" %}
+{% block title %}사회민주당 - 정치인 여론 정보 사이트{% endblock %}
+{% block content %}
+
+<section class="featured">
+  <div class="container">
+    <div class="section-header">
+      <h2>사회민주당</h2>
+    </div>
+    <!-- (필요하다면 하드코딩 카드) -->
+    <div class="product-grid1">
+      <div class="product-card">
+        <div class="product-image">
+          <img src="https://www.assembly.go.kr/static/portal/img/openassm/new/b71fbe23a11d45a9935a24fcfac4447b.png" alt="사진" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-title">한창민</h3>
+        </div>
+      </div>
+    </div>
+    <!-- 동적으로 생성될 카드 컨테이너와 페이지네이션은 카드 바깥에 위치 -->
+    <div id="resultContainer" class="container" style="margin-bottom: 50px;"></div>
+    <div id="pagination" style="margin:20px 0; text-align:center;"></div>
+  </div>
+</section>
+
+<script>
+  window.members = {{ members|tojson|safe }};
+</script>
+<script src="{{ url_for('static', filename='js/js.js') }}"></script>
+{% endblock %}
