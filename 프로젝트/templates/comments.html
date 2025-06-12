@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>유튜브 댓글 감성분석 목록</title>
+</head>
+<body>
+    <h1>유튜브 댓글 감성분석 목록</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>의원명</th>
+                <th>댓글</th>
+                <th>감성</th>
+                <th>점수</th>
+                <th>좋아요</th>
+                <th>저장일시</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in comments %}
+            <tr>
+                <td>{{ c[0] }}</td>
+                <td>{{ c[1] }}</td>
+                <td>{{ c[2] }}</td>
+                <td>{{ c[3] }}</td>
+                <td>{{ c[4] }}</td>
+                <td>{{ c[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

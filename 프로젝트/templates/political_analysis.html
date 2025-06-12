@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>네이버 뉴스 기사 목록</title>
+</head>
+<body>
+    <h1>네이버 뉴스 기사 목록</h1>
+    <table border="1">
+        <tr>
+            <th>정치인</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>날짜</th>
+            <th>감성</th>
+            <th>점수</th>
+            <th>링크</th>
+        </tr>
+        {% for row in news %}
+        <tr>
+            <td>{{ row[6] }}</td>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[4] }}</td>
+            <td>{{ row[5] }}</td>
+            <td><a href="{{ row[3] }}" target="_blank">기사보기</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

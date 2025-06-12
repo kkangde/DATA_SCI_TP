@@ -8,7 +8,34 @@ import html
 import logging
 import unicodedata
 from cachelib import SimpleCache
+import sqlite3
+import os
 
+DB_PATH1 = r"c:\Users\Hangh\OneDrive\바탕 화면\DATA_SCI_TP\dddd\db.sqlite3"
+DB_PATH2 = r"c:\Users\Hangh\OneDrive\바탕 화면\DATA_SCI_TP\dddd\political_analysis.db"
+conn = sqlite3.connect(DB_PATH2)
+conn.execute("""
+CREATE TABLE IF NOT EXISTS politicians (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE,
+    party TEXT
+)
+""")
+conn.execute("""
+CREATE TABLE IF NOT EXISTS news_articles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    politician_id INTEGER,
+    title TEXT,
+    content TEXT,
+    pub_date TEXT,
+    link TEXT,
+    label TEXT,
+    score REAL,
+    FOREIGN KEY(politician_id) REFERENCES politicians(id)
+)
+""")
+conn.commit()
+conn.close()
 app = Flask(__name__)
 CORS(app)
 
@@ -280,14 +307,47 @@ def get_politician_analysis():
         logger.error(f"감정 분석 오류: {e}")
         return jsonify({"error": str(e)}), 500
 
-@app.errorhandler(404)
-def not_found_error(error):
-    return jsonify({"error": "페이지를 찾을 수 없습니다."}), 404
+# DB 파일 경로 (상대경로)
+DB_PATH1 = os.path.abspath(os.path.join(os.path.dirname(__file__), '../dddd/db.sqlite3'))
+DB_PATH2 = os.path.abspath(os.path.join(os.path.dirname(__file__), 'dddd/political_analysis.db'))
+
+@app.route('/comments')
+def show_comments():
+    conn = sqlite3.connect(DB_PATH1)
+    cursor = conn.cursor()
+    cursor.execute("SELECT member_name, comment_text, sentiment, sentiment_score, like_count, created_at FROM analysis_commentsentiment ORDER BY created_at DESC")
+    comments = cursor.fetchall()
+    conn.close()
+    return render_template('comments.html', comments=comments)
+
+@app.route('/tables')
+def show_tables():
+    conn = sqlite3.connect(DB_PATH1)
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = cursor.fetchall()
+    conn.close()
+    return '<br>'.join([t[0] for t in tables])
 
 @app.errorhandler(500)
 def internal_error(error):
     logger.error(f"내부 서버 오류: {error}")
     return jsonify({"error": "내부 서버 오류가 발생했습니다."}), 500
+
+@app.route('/news')
+def show_news():
+    conn = sqlite3.connect(DB_PATH2)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT n.title, n.content, n.pub_date, n.link, n.label, n.score, p.name as politician_name
+        FROM news_articles n
+        LEFT JOIN politicians p ON n.politician_id = p.id
+        ORDER BY n.pub_date DESC
+        LIMIT 100
+    """)
+    news = cursor.fetchall()
+    conn.close()
+    return render_template('news.html', news=news)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
