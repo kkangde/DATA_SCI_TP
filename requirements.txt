@@ -1,0 +1,7 @@
+flask
+flask-cors
+requests
+transformers
+cachelib
+torch
+protobuf
